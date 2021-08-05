@@ -26,7 +26,7 @@
 		"ms-vscode.vscode-typescript-next",
 		"ecmel.vscode-html-css",
 	],
-	"postCreateCommand": ""
+	"postCreateCommand": "src/dev.sh layout && src/dev.sh build"
 }
 
 // Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
