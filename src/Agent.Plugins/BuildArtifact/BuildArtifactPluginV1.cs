@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Agent.Sdk;
+using Agent.Sdk.Knob;
 using Agent.Plugins;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.Core.WebApi;
@@ -301,6 +302,13 @@ namespace Agent.Plugins.BuildArtifacts
 
             // Build artifacts always includes the artifact in the path name
             downloadParameters.IncludeArtifactNameInPath = true;
+
+            // By default, file container provider appends artifact name to target path when downloading specific files.
+            // This is undesirable because DownloadBuildArtifactsV0 doesn't do that.
+            // We also have a blob to enable appending artifact name just in case we break someone.
+            // By default, its value is going to be false, so we're defaulting to V0-like target path resolution.
+            downloadParameters.AppendArtifactNameToTargetPath =
+                AgentKnobs.EnableIncompatibleBuildArtifactsPathResolution.GetValue(context).AsBoolean();
 
             context.Output(StringUtil.Loc("DownloadArtifactTo", targetPath));
             await server.DownloadAsyncV2(context, downloadParameters, downloadOption, token);
