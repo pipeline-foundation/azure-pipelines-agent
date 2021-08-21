@@ -34,6 +34,12 @@ namespace Agent.Sdk.Knob
             new EnvironmentKnobSource("AGENT_SKIP_POST_EXECUTION_IF_CONTAINER_STOPPED"),
             new BuiltInDefaultKnobSource("false"));
 
+        public static readonly Knob MTUValueForContainerJobs = new Knob(
+            nameof(MTUValueForContainerJobs),
+            "Allow to specify MTU value for networks used by container jobs (useful for docker-in-docker scenarios in k8s cluster).",
+            new EnvironmentKnobSource("AGENT_DOCKER_MTU_VALUE"),
+            new BuiltInDefaultKnobSource(string.Empty));
+
         // Directory structure
         public static readonly Knob AgentToolsDirectory = new Knob(
             nameof(AgentToolsDirectory),
