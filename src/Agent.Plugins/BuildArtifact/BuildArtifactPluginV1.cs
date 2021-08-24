@@ -60,6 +60,7 @@ namespace Agent.Plugins.BuildArtifacts
             public static readonly string RetryDownloadCount = "retryDownloadCount";
             public static readonly string ParallelizationLimit = "parallelizationLimit";
             public static readonly string CheckDownloadedFiles = "checkDownloadedFiles";
+            public static readonly string ExtractTars = "extractTars";
         }
     }
 
@@ -73,6 +74,7 @@ namespace Agent.Plugins.BuildArtifacts
         static readonly string buildVersionToDownloadLatest = "latest";
         static readonly string buildVersionToDownloadSpecific = "specific";
         static readonly string buildVersionToDownloadLatestFromBranch = "latestFromBranch";
+        static readonly string extractedTarsTempDir = "extracted_tars";
         static readonly Options minimatchOptions = new Options() {
            Dot = true,
            NoBrace = true,
@@ -106,6 +108,9 @@ namespace Agent.Plugins.BuildArtifacts
             string retryDownloadCount = context.GetInput(TaskProperties.RetryDownloadCount, required: false);
             string parallelizationLimit = context.GetInput(TaskProperties.ParallelizationLimit, required: false);
             string checkDownloadedFiles = context.GetInput(TaskProperties.CheckDownloadedFiles, required: false);
+            string extractTars = context.GetInput(TaskProperties.ExtractTars, required: false);
+
+            string extractedTarsTempPath = Path.Combine(context.Variables.GetValueOrDefault("Agent.TempDirectory")?.Value, extractedTarsTempDir);
 
             targetPath = Path.IsPathFullyQualified(targetPath) ? targetPath : Path.GetFullPath(Path.Combine(defaultWorkingDirectory, targetPath));
 
@@ -138,6 +143,16 @@ namespace Agent.Plugins.BuildArtifacts
             }
 
             var resultFilter = GetResultFilter(allowPartiallySucceededBuildsBool, allowFailedBuildsBool, allowCanceledBuildsBool);
+
+            if (!bool.TryParse(extractTars, out var extractTarsBool))
+            {
+                extractTarsBool = false;
+            }
+
+            if (extractTarsBool && PlatformUtil.RunningOnWindows)
+            {
+                throw new ArgumentException(StringUtil.Loc("TarExtractionNotSupportedInWindows"));
+            }
 
             PipelineArtifactServer server = new PipelineArtifactServer(tracer);
             ArtifactDownloadParameters downloadParameters;
@@ -190,7 +205,9 @@ namespace Agent.Plugins.BuildArtifacts
                     ParallelizationLimit = int.TryParse(parallelizationLimit, out var parallelLimit) ? parallelLimit : 8,
                     RetryDownloadCount = int.TryParse(retryDownloadCount, out var retryCount) ? retryCount : 4,
                     CheckDownloadedFiles = bool.TryParse(checkDownloadedFiles, out var checkDownloads) && checkDownloads,
-                    CustomMinimatchOptions = minimatchOptions
+                    CustomMinimatchOptions = minimatchOptions,
+                    ExtractTars = extractTarsBool,
+                    ExtractedTarsTempPath = extractedTarsTempPath
                 };
             }
             else if (buildType == buildTypeSpecific)
@@ -285,7 +302,9 @@ namespace Agent.Plugins.BuildArtifacts
                     ParallelizationLimit = int.TryParse(parallelizationLimit, out var parallelLimit) ? parallelLimit : 8,
                     RetryDownloadCount = int.TryParse(retryDownloadCount, out var retryCount) ? retryCount : 4,
                     CheckDownloadedFiles = bool.TryParse(checkDownloadedFiles, out var checkDownloads) && checkDownloads,
-                    CustomMinimatchOptions = minimatchOptions
+                    CustomMinimatchOptions = minimatchOptions,
+                    ExtractTars = extractTarsBool,
+                    ExtractedTarsTempPath = extractedTarsTempPath
                 };
             }
             else
