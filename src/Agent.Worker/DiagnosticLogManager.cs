@@ -180,6 +180,31 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
                 }
             }
 
+            if (PlatformUtil.RunningOnLinux && !PlatformUtil.RunningOnRHEL6) {
+                executionContext.Debug("Dumping info about invalid MD5 sums of installed packages.");
+
+                try
+                {
+                    string packageVerificationResults = await GetPackageVerificationResult();
+                    IEnumerable<string> brokenPackagesInfo = packageVerificationResults
+                        .Split("\n")
+                        .Where((line) => !String.IsNullOrEmpty(line) && !line.EndsWith("OK"));
+
+                    string brokenPackagesLogsPath = $"{HostContext.GetDirectory(WellKnownDirectory.Diag)}/BrokenPackages-{ jobStartTimeUtc.ToString("yyyyMMdd-HHmmss") }.log";
+                    File.AppendAllLines(brokenPackagesLogsPath, brokenPackagesInfo);
+
+                    string destination = Path.Combine(supportFilesFolder, Path.GetFileName(brokenPackagesLogsPath));
+                    File.Copy(brokenPackagesLogsPath, destination);
+                }
+                catch (Exception ex)
+                {
+                    executionContext.Debug("Failed to dump broken packages logs. Skipping.");
+                    executionContext.Debug($"Error message: {ex}");
+                }
+            } else {
+                executionContext.Debug("The platform is not based on Debian - skipping debsums check.");
+            }
+
             try
             {
                 executionContext.Debug("Starting dumping Agent Azure VM extension logs.");
@@ -667,6 +692,40 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
                     killProcessOnCancel: false,
                     cancellationToken: default(CancellationToken));
             }
+        }
+
+        /// <summary>
+        ///  Git package verification result using the "debsums" utility.
+        /// </summary>
+        /// <returns>String with the "debsums" output</returns>
+        private async Task<string> GetPackageVerificationResult()
+        {
+            var debsums = WhichUtil.Which("debsums");
+            var stringBuilder = new StringBuilder();
+            using (var processInvoker = HostContext.CreateService<IProcessInvoker>())
+            {
+                processInvoker.OutputDataReceived += (object sender, ProcessDataReceivedEventArgs mes) =>
+                {
+                    stringBuilder.AppendLine(mes.Data);
+                };
+                processInvoker.ErrorDataReceived += (object sender, ProcessDataReceivedEventArgs mes) =>
+                {
+                    stringBuilder.AppendLine(mes.Data);
+                };
+
+                await processInvoker.ExecuteAsync(
+                    workingDirectory: HostContext.GetDirectory(WellKnownDirectory.Bin),
+                    fileName: debsums,
+                    arguments: string.Empty,
+                    environment: null,
+                    requireExitCodeZero: false,
+                    outputEncoding: null,
+                    killProcessOnCancel: false,
+                    cancellationToken: default(CancellationToken)
+                );
+            }
+
+            return stringBuilder.ToString();
         }
     }
 
