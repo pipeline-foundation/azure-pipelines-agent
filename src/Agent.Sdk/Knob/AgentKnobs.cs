@@ -167,6 +167,12 @@ namespace Agent.Sdk.Knob
             new EnvironmentKnobSource("VSTS_TASK_DOWNLOAD_TIMEOUT"),
             new BuiltInDefaultKnobSource("1200")); // 20*60
 
+        public static readonly Knob TaskDownloadRetryLimit = new Knob(
+            nameof(TaskDownloadRetryLimit),
+            "Attempts to download a task when starting a job",
+            new EnvironmentKnobSource("VSTS_TASK_DOWNLOAD_RETRY_LIMIT"),
+            new BuiltInDefaultKnobSource("3"));
+
         // HTTP
         public const string LegacyHttpVariableName = "AZP_AGENT_USE_LEGACY_HTTP";
         public static readonly Knob UseLegacyHttpHandler = new DeprecatedKnob(
