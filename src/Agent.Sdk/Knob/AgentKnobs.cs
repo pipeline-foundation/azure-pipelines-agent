@@ -377,6 +377,15 @@ namespace Agent.Sdk.Knob
             new EnvironmentKnobSource("VSTSAGENT_DUMP_PACKAGES_VERIFICATION_RESULTS"),
             new BuiltInDefaultKnobSource("false"));
 
+        public const string ContinueAfterCancelProcessTreeKillAttemptVariableName = "VSTSAGENT_CONTINUE_AFTER_CANCEL_PROCESSTREEKILL_ATTEMPT";
+
+        public static readonly Knob ContinueAfterCancelProcessTreeKillAttempt = new Knob(
+            nameof(ContinueAfterCancelProcessTreeKillAttempt),
+            "If true, continue cancellation after attempt to KillProcessTree",
+            new RuntimeKnobSource(ContinueAfterCancelProcessTreeKillAttemptVariableName),
+            new EnvironmentKnobSource(ContinueAfterCancelProcessTreeKillAttemptVariableName),
+            new BuiltInDefaultKnobSource("false"));
+
         public static readonly Knob UseNode = new Knob(
             nameof(UseNode),
             "Forces the agent to use different version of Node if when configured runner is not available. Possible values: LTS - make agent use latest LTS version of Node; UPGRADE - make agent use next available version of Node",
