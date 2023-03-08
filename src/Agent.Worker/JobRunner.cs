@@ -128,13 +128,21 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
                         }
 
                         if (!string.IsNullOrWhiteSpace(notSupportNet6Message))
-                        {
+                        {                            
+                            if(!AgentKnobs.AcknowledgeNoUpdates.GetValue(jobContext).AsBoolean())
+                            {
+                                jobContext.Error(StringUtil.Loc("FailAgentOnUnsupportedOs"));
+                                return await CompleteJobAsync(jobServer, jobContext, message, TaskResult.Failed);
+                            }
+
                             jobContext.AddIssue(new Issue() { Type = IssueType.Warning, Message = notSupportNet6Message });
                         }
                     }
                     catch (Exception ex)
                     {
                         Trace.Error($"Error has occurred while checking if system supports .NET 6: {ex}");
+                        return await CompleteJobAsync(jobServer, jobContext, message, TaskResult.Failed);
+
                     }
                 }
 
