@@ -43,7 +43,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Blob
             foreach (var file in fileNodes.Where(x => x.Success))
             {
                 // ChunkHelper uses 64k block default size
-                var dedupId = file.Node.GetDedupIdentifier();
+                var dedupId = file.Node.GetDedupIdentifier(HashType.Dedup64K);
                 fileDedupIds[dedupId] = file.Path;
             }
 
@@ -180,7 +180,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Blob
             var chunk = await ChunkerHelper.CreateFromFileAsync(FileSystem.Instance, itemPath, cancellationToken, false);
             var rootNode = new DedupNode(new[] { chunk });
             // ChunkHelper uses 64k block default size
-            var dedupId = rootNode.GetDedupIdentifier();
+            var dedupId = rootNode.GetDedupIdentifier(HashType.Dedup64K);
 
             // Setup upload session to keep file for at mimimum one day
             // Blobs will need to be associated with the server with an ID ref otherwise they will be

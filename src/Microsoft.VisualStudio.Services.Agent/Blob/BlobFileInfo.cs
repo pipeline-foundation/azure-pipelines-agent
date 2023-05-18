@@ -13,7 +13,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Blob
         {
             get
             {
-                return Node.GetDedupIdentifier();
+                return Node.GetDedupIdentifier(HashType.Dedup64K);
             }
         }
         public bool Success { get; set; }
