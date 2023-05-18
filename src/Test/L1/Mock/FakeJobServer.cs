@@ -142,7 +142,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Tests.L1.Worker
             UploadedAttachmentBlobFiles.Add(itemPath);
             var chunk = await ChunkerHelper.CreateFromFileAsync(FileSystem.Instance, itemPath, cancellationToken, false);
             var rootNode = new DedupNode(new[] { chunk });
-            var dedupId = rootNode.GetDedupIdentifier();
+            var dedupId = rootNode.GetDedupIdentifier(HashType.Dedup64K);
 
             return (dedupId, rootNode.TransitiveContentBytes);
         }
