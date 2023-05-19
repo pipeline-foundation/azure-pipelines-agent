@@ -4,9 +4,9 @@
 using Agent.Sdk.Knob;
 using Agent.Worker.Handlers.Helpers;
 using Microsoft.VisualStudio.Services.Agent.Util;
+using Newtonsoft.Json;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -197,7 +197,7 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker.Handlers
 
             var (processedArgs, telemetry) = ProcessHandlerHelper.ProcessInputArguments(arguments);
 
-            ExecutionContext.Debug(string.Join(System.Environment.NewLine, telemetry.ToDictionary().Select(a => $"{a.Key}: {a.Value}")));
+            ExecutionContext.Debug($"Agent PH telemetry: {JsonConvert.SerializeObject(telemetry.ToDictionary(), Formatting.None)}");
 
             var enableTelemetry = AgentKnobs.ProcessHandlerTelemetry.GetValue(ExecutionContext).AsBoolean();
             ExecutionContext.Debug($"Enable telemetry: '{enableTelemetry}'");
