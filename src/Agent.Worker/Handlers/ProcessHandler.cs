@@ -137,8 +137,8 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker.Handlers
                 ? $"/c \"{_generatedScriptPath}"
                 : $"/c \"{command} {arguments}";
 
-            cmdExeArgs += _modifyEnvironment
-                ? " && echo {OutputDelimiter} && set \""
+            cmdExeArgs += _modifyEnvironment && !enableSecureArguments
+                ? $" && echo {OutputDelimiter} && set \""
                 : "\"";
 
             // Invoke the process.
@@ -211,9 +211,15 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker.Handlers
             var agentTemp = ExecutionContext.GetVariableValueOrDefault(Constants.Variables.Agent.TempDirectory);
             _generatedScriptPath = Path.Combine(agentTemp, $"processHandlerScript_{scriptId}.cmd");
 
+            var scriptArgs = $"/v:ON /c \"{command} !{inputArgsEnvVarName}!";
+
+            scriptArgs += _modifyEnvironment
+            ? $" && echo {OutputDelimiter} && set \""
+            : "\"";
+
             using (var writer = new StreamWriter(_generatedScriptPath))
             {
-                writer.WriteLine($"{cmdExe} /v:ON /c \"{command} !{inputArgsEnvVarName}!\"");
+                writer.WriteLine($"{cmdExe} {scriptArgs}");
             }
 
             ExecutionContext.Debug($"Generated script file: {_generatedScriptPath}");
