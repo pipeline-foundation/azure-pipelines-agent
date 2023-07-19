@@ -486,5 +486,12 @@ namespace Agent.Sdk.Knob
             new RuntimeKnobSource("AGENT_FORCE_CREATE_TASKS_DIRECTORY"),
             new EnvironmentKnobSource("AGENT_FORCE_CREATE_TASKS_DIRECTORY"),
             new BuiltInDefaultKnobSource("false"));
+
+        public static readonly Knob CleanupPSModules = new Knob(
+            nameof(CleanupPSModules),
+            "Removes the PSModulePath environment variable if the agent is running in PowerShell.",
+            new RuntimeKnobSource("AZP_AGENT_CLEANUP_PSMODULES_IN_POWERSHELL"),
+            new EnvironmentKnobSource("AZP_AGENT_CLEANUP_PSMODULES_IN_POWERSHELL"),
+            new BuiltInDefaultKnobSource("false"));
     }
 }
