@@ -22,7 +22,7 @@ parameters:
 - name: alpine_x64
   type: boolean
   displayName: Alpine (x64)
-  default: false
+  default: true
 - name: rhel7_x64
   type: boolean
   displayName: RHEL 7 (x64)
