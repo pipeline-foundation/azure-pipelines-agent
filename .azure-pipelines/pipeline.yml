@@ -51,7 +51,7 @@ parameters:
   default: true
 - name: alpine_x64
   type: boolean
-  default: false
+  default: true
 - name: rhel7_x64
   type: boolean
   default: true
@@ -214,7 +214,7 @@ stages:
         functionalTests: ${{ parameters.test }}
         sign: false
         publishArtifacts: ${{ parameters.publishArtifacts }}
-        buildAlternatePackage: ${{ parameters.buildAlternatePackage }}
+        buildAlternatePackage: false
 
   # RHEL7 (x64)
   - ${{ if parameters.rhel7_x64 }}:
