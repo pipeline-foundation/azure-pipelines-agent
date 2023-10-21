@@ -121,6 +121,13 @@ namespace Agent.Sdk.Knob
             new EnvironmentKnobSource("AGENT_GIT_USE_SECURE_PARAMETER_PASSING"),
             new BuiltInDefaultKnobSource("true"));
 
+        public static readonly Knob FixPossibleGitOutOfMemoryProblem = new Knob(
+            nameof(FixPossibleGitOutOfMemoryProblem),
+            "When true, set config git properties to fix possible out of memory problem",
+            new RuntimeKnobSource("FIX_POSSIBLE_GIT_OUT_OF_MEMORY_PROBLEM"),
+            new EnvironmentKnobSource("FIX_POSSIBLE_GIT_OUT_OF_MEMORY_PROBLEM"),
+            new BuiltInDefaultKnobSource("false"));
+
         public static readonly Knob TfVCUseSecureParameterPassing = new Knob(
             nameof(TfVCUseSecureParameterPassing),
             "If true, don't pass auth token in TFVC parameters",
@@ -157,6 +164,13 @@ namespace Agent.Sdk.Knob
             "Forces the agent to use Node 20 handler for all Node-based tasks",
             new RuntimeKnobSource("AGENT_USE_NODE20"),
             new EnvironmentKnobSource("AGENT_USE_NODE20"),
+            new BuiltInDefaultKnobSource("false"));
+
+        public static readonly Knob UseNode20InUnsupportedSystem = new Knob(
+            nameof(UseNode20InUnsupportedSystem),
+            "Forces the agent to use Node 20 handler for all Node-based tasks, even if it's in an unsupported system",
+            new RuntimeKnobSource("AGENT_USE_NODE20_IN_UNSUPPORTED_SYSTEM"),
+            new EnvironmentKnobSource("AGENT_USE_NODE20_IN_UNSUPPORTED_SYSTEM"),
             new BuiltInDefaultKnobSource("false"));
 
         // Agent logging
