@@ -546,5 +546,12 @@ namespace Agent.Sdk.Knob
             "If true, the agent will check in the 'Initialize job' step each task used in the job for task deprecation.",
             new EnvironmentKnobSource("AZP_AGENT_CHECK_FOR_TASK_DEPRECATION"),
             new BuiltInDefaultKnobSource("false"));
+
+        public static readonly Knob MountWorkspace = new Knob(
+            nameof(MountWorkspace),
+            "If true, the agent will mount the Pipeline.Workspace directory instead of the Working directory for steps which target a Docker container.",
+            new RuntimeKnobSource("AZP_AGENT_MOUNT_WORKSPACE"),
+            new EnvironmentKnobSource("AZP_AGENT_MOUNT_WORKSPACE"),
+            new BuiltInDefaultKnobSource("false"));
     }
 }
