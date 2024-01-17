@@ -326,14 +326,14 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
             {
                 string friendlyName = taskJson["friendlyName"].Value<string>();
                 int majorVersion = new Version(task.Version).Major;
-                string deprecationMessage = StringUtil.Loc("DeprecationMessage", friendlyName, majorVersion, task.Name);
+                string commonDeprecationMessage = StringUtil.Loc("DeprecationMessage", friendlyName, majorVersion, task.Name);
                 var removalDate = taskJson["removalDate"];
 
                 if (removalDate != null)
                 {
                     string whitespace = " ";
                     string removalDateString = removalDate.Value<DateTime>().ToString("MMMM d, yyyy");
-                    deprecationMessage += whitespace + StringUtil.Loc("DeprecationMessageRemovalDate", removalDateString);
+                    commonDeprecationMessage += whitespace + StringUtil.Loc("DeprecationMessageRemovalDate", removalDateString);
                     var helpUrl = taskJson["helpUrl"];
 
                     if (helpUrl != null)
@@ -345,12 +345,19 @@ namespace Microsoft.VisualStudio.Services.Agent.Worker
                         if (helpUrlString.StartsWith(urlPrefix))
                         {
                             string versionHelpUrl = $"{helpUrlString}-v{majorVersion}".Replace(urlPrefix, $"https://learn.microsoft.com/azure/devops/pipelines/tasks/reference/");
-                            deprecationMessage += whitespace + StringUtil.Loc("DeprecationMessageHelpUrl", versionHelpUrl);
+                            commonDeprecationMessage += whitespace + StringUtil.Loc("DeprecationMessageHelpUrl", versionHelpUrl);
                         }
                     }
                 }
 
-                executionContext.Warning(deprecationMessage);
+                executionContext.Warning(commonDeprecationMessage);
+
+                var tailoredDeprecationMessage = taskJson["deprecationMessage"];
+
+                if (tailoredDeprecationMessage != null)
+                {
+                    executionContext.Warning(tailoredDeprecationMessage.ToString());
+                }
             }
         }
 
