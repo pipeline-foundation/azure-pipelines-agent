@@ -270,7 +270,7 @@ extends:
         - Verify_release
         condition: and(succeeded(), not(${{ parameters.onlyGitHubRelease }}))
         pool:
-          vmImage: ubuntu-latest
+          name: 1ES-Shared-Hosted-Pool_Linux-Mariner-2
         jobs:
         ################################################################################
         - job: create_ado_prs
