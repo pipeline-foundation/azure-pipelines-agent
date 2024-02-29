@@ -1,3 +1,5 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+
 schedules:
 - cron: '0 6 * * 2'
   displayName: Scheduled weekly run
@@ -35,11 +37,20 @@ parameters:
   default: true
   displayName: Test Proxy Agent
 
+- name: disableNotifications
+  type: boolean
+  default: false
+  displayName: Disable Teams Notifications
+
+# Skip CG
+variables:
+  - name: OneES_JobScannedCount
+    value: 1
+
 extends:
-  template: .azure-pipelines/pipeline.yml
+  template: /.azure-pipelines/pipeline.yml@self
   parameters:
-    branch:  $[ stageDependencies.Verify_release.Set_variables.outputs['SetReleaseVariables.releaseBranch'] ]
-    componentDetection: false
+    branch: $[ stageDependencies.Verify_release.Set_variables.outputs['SetReleaseVariables.releaseBranch'] ]
     test: ${{ not(parameters.skipTests) }}
     sign: true
     publishArtifacts: true
@@ -57,7 +68,9 @@ extends:
     - stage: Verify_release
       displayName: Verify it's a release run
       pool:
-        vmImage: ubuntu-latest
+        name: 1ES-ABTT-Shared-Pool
+        image: abtt-ubuntu-2204
+        os: linux
       jobs:
       - job: Set_variables
         displayName: Set release-specific variables
@@ -129,7 +142,9 @@ extends:
           AgentVersion: $[ stageDependencies.Verify_release.Set_variables.outputs['SetReleaseVariables.agentVersion'] ]
         condition: and(succeeded(), eq(variables.IsRelease, 'True'))
         pool:
-          vmImage: ubuntu-latest
+          name: 1ES-ABTT-Shared-Pool
+          image: abtt-ubuntu-2204
+          os: linux
         steps:
 
         - checkout: self
@@ -271,7 +286,9 @@ extends:
         - Verify_release
         condition: and(succeeded(), not(${{ parameters.onlyGitHubRelease }}))
         pool:
-          name: 1ES-Shared-Hosted-Pool_Linux-Mariner-2
+          name: 1ES-ABTT-Shared-Pool
+          image: abtt-mariner
+          os: linux
         jobs:
         ################################################################################
         - job: create_ado_prs
@@ -314,9 +331,10 @@ extends:
         dependsOn:
         - Verify_release
         - CreatePRs
-        condition: always()
         pool:
-          vmImage: ubuntu-latest
+          name: 1ES-ABTT-Shared-Pool
+          image: abtt-ubuntu-2204
+          os: linux
         jobs:
         - job: j_SendPRsNotifications
           displayName: Send Release PRs notifications
@@ -328,6 +346,7 @@ extends:
             CcPrLink: $[ stageDependencies.CreatePRs.create_ado_prs.outputs['s_CreateAdoPrs.CcPrLink'] ]
           condition: |
             and(
+              not(${{ parameters.disableNotifications }}),
               eq(variables.IsRelease, 'True'),
               not(${{ parameters.onlyGitHubRelease }})
             )
