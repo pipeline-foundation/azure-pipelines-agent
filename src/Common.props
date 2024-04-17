@@ -52,6 +52,9 @@
   <PropertyGroup Condition="'$(OSPlatform)' == 'OS_LINUX' AND '$(PackageRuntime)' == 'linux-musl-x64'">
     <OSArchitecture>X64</OSArchitecture>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(OSPlatform)' == 'OS_LINUX' AND '$(PackageRuntime)' == 'linux-musl-arm64'">
+    <OSArchitecture>ARM64</OSArchitecture>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(OSPlatform)' == 'OS_LINUX' AND '$(PackageRuntime)' == 'linux-arm'">
     <OSArchitecture>ARM</OSArchitecture>
   </PropertyGroup>
