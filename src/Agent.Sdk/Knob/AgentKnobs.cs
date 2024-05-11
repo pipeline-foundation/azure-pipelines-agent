@@ -697,5 +697,13 @@ namespace Agent.Sdk.Knob
             new RuntimeKnobSource("DISABLE_RESOURCE_UTILIZATION_WARNINGS"),
             new EnvironmentKnobSource("DISABLE_RESOURCE_UTILIZATION_WARNINGS"),
             new BuiltInDefaultKnobSource("false"));
+
+        public static readonly Knob Rosetta2Warning = new Knob(
+            nameof(Rosetta2Warning),
+            "Log warning when X64 Agent is used on a Apple Silicon device.",
+            new RuntimeKnobSource("ROSETTA2_WARNING"),
+            new EnvironmentKnobSource("ROSETTA2_WARNING"),
+            new PipelineFeatureSource("Rosetta2Warning"),
+            new BuiltInDefaultKnobSource("false"));
     }
 }
