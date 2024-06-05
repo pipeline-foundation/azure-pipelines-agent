@@ -633,6 +633,12 @@ namespace Agent.Sdk.Knob
             new RuntimeKnobSource("AZP_AGENT_CHECK_FOR_TASK_DEPRECATION"),
             new BuiltInDefaultKnobSource("false"));
 
+        public static readonly Knob CheckIfTaskNodeRunnerIsDeprecated = new Knob(
+            nameof(CheckIfTaskNodeRunnerIsDeprecated),
+            "If true, the agent will check in the 'Initialize job' step each task used in the job if this task has node handlers, and all of them are deprecated.",
+            new RuntimeKnobSource("AZP_AGENT_CHECK_IF_TASK_NODE_RUNNER_IS_DEPRECATED"),
+            new BuiltInDefaultKnobSource("false"));
+
         public static readonly Knob MountWorkspace = new Knob(
             nameof(MountWorkspace),
             "If true, the agent will mount the Pipeline.Workspace directory instead of the Working directory for steps which target a Docker container.",
