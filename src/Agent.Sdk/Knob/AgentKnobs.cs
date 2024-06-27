@@ -730,5 +730,12 @@ namespace Agent.Sdk.Knob
             "Checks if the PSModulePath environment variable contains locations specific to PowerShell Core.",
             new EnvironmentKnobSource("AZP_AGENT_CHECK_PSMODULES_LOCATIONS"),
             new BuiltInDefaultKnobSource("false"));
+
+        public static readonly Knob UseDockerStdinPasswordOnWindows = new Knob(
+            nameof(UseDockerStdinPasswordOnWindows),
+            "If true, use --password-stdin for docker login on Windows.",
+            new RuntimeKnobSource("AZP_AGENT_USE_DOCKER_STDIN_PASSWORD_WINDOWS"),
+            new PipelineFeatureSource("UseDockerStdinPasswordOnWindows"),
+            new BuiltInDefaultKnobSource("false"));
     }
 }
