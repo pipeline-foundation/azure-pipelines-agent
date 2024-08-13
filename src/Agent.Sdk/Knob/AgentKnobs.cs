@@ -654,6 +654,13 @@ namespace Agent.Sdk.Knob
             new PipelineFeatureSource("CheckIfTaskNodeRunnerIsDeprecated"),
             new BuiltInDefaultKnobSource("false"));
 
+        public static readonly Knob UseNode20ToStartContainer = new Knob(
+            nameof(UseNode20ToStartContainer),
+            "If true, the agent will use Node 20 to start docker container when executing container job and the container platform is the same as the host platform.",
+            new RuntimeKnobSource("AZP_AGENT_USE_NODE20_TO_START_CONTAINER"),
+            new PipelineFeatureSource("UseNode20ToStartContainer"),
+            new BuiltInDefaultKnobSource("false"));
+
         public static readonly Knob EnableNewSecretMasker = new Knob(
             nameof(EnableNewSecretMasker),
             "If true, the agent will use new SecretMasker with additional filters & performance enhancements",
