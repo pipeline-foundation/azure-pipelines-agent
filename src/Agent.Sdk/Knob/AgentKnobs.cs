@@ -592,6 +592,12 @@ namespace Agent.Sdk.Knob
             new EnvironmentKnobSource("AGENT_DISABLE_DRAIN_QUEUES_AFTER_TASK"),
             new BuiltInDefaultKnobSource("false"));
 
+        public static readonly Knob EnableResourceMonitorDebugOutput = new Knob(
+            nameof(EnableResourceMonitorDebugOutput),
+            "If true, the agent will show the resource monitor output for debug runs",
+            new RuntimeKnobSource("AZP_ENABLE_RESOURCE_MONITOR_DEBUG_OUTPUT"),
+            new EnvironmentKnobSource("AZP_ENABLE_RESOURCE_MONITOR_DEBUG_OUTPUT"),
+            new BuiltInDefaultKnobSource("false"));
 
         public static readonly Knob EnableResourceUtilizationWarnings = new Knob(
             nameof(EnableResourceUtilizationWarnings),
