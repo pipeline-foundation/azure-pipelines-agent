@@ -128,6 +128,21 @@ namespace Microsoft.VisualStudio.Services.Agent.Listener
                     }
                 }
 
+                if (command.IsReAuthCommand())
+                {
+                    try
+                    {
+                        await configManager.ReAuthAsync(command);
+                        return Constants.Agent.ReturnCode.Success;
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.Error(ex);
+                        _term.WriteError(ex.Message);
+                        return Constants.Agent.ReturnCode.TerminatedError;
+                    }
+                }
+
                 _inConfigStage = false;
 
                 // warmup agent process (JIT/CLR)
