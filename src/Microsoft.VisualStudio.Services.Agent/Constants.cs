@@ -203,6 +203,7 @@ namespace Microsoft.VisualStudio.Services.Agent
                     public const string Remove = "remove";
                     public const string Run = "run";
                     public const string Warmup = "warmup";
+                    public const string ReAuth = "reauth";
                 }
 
                 //if you are adding a new flag, please make sure you update the
