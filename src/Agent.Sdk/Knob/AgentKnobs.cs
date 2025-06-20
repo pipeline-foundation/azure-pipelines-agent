@@ -386,6 +386,13 @@ namespace Agent.Sdk.Knob
             new RuntimeKnobSource("AGENT_FAIL_ON_INCOMPATIBLE_OS"),
             new BuiltInDefaultKnobSource("false"));
 
+        public static readonly Knob OverridePipelineArtifactChunkSize = new Knob(
+            nameof(OverridePipelineArtifactChunkSize),
+            "Overrides the chunk size used in this pipeline for pipeline artifact publish.",
+            new RuntimeKnobSource("OVERRIDE_PIPELINE_ARTIFACT_CHUNKSIZE"),
+            new EnvironmentKnobSource("OVERRIDE_PIPELINE_ARTIFACT_CHUNKSIZE"),
+            new BuiltInDefaultKnobSource(string.Empty));
+
         public static readonly Knob AgentEnablePipelineArtifactLargeChunkSize = new Knob(
             nameof(AgentEnablePipelineArtifactLargeChunkSize),
             "Enables large chunk size for pipeline artifacts.",
