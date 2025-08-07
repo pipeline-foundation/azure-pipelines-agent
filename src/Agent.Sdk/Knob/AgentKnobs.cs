@@ -351,6 +351,12 @@ namespace Agent.Sdk.Knob
             new EnvironmentKnobSource("VSTS_HTTP_PROXY_USERNAME"),
             new BuiltInDefaultKnobSource(string.Empty));
 
+        public static readonly Knob UseBasicAuthForProxy = new Knob(
+            nameof(UseBasicAuthForProxy),
+            "Enable proxy basic authentication to avoid NTLM negotiation issues",
+            new EnvironmentKnobSource("VSTS_HTTP_PROXY_BASICAUTH"),
+            new BuiltInDefaultKnobSource("false"));
+
         // Secrets masking
         public static readonly Knob AllowUnsafeMultilineSecret = new Knob(
             nameof(AllowUnsafeMultilineSecret),
