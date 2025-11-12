@@ -23,6 +23,10 @@ if [[ "$PACKAGERUNTIME" == "win-arm64" ]]; then
     INCLUDE_NODE10=false;
 fi
 
+if [[ "$PACKAGERUNTIME" == "linux-arm" ]]; then
+    INCLUDE_NODE24=false
+fi
+
 NODE_VERSION="6.17.1"
 NODE10_VERSION="10.24.1"
 NODE16_VERSION="16.20.2"
@@ -176,8 +180,12 @@ if [[ "$PACKAGERUNTIME" == "win-x"* ]]; then
         acquireExternalTool "$CONTAINER_URL/azcopy/1/azcopy.zip" azcopy
         acquireExternalTool "$CONTAINER_URL/vstshost/m122_887c6659_binding_redirect_patched/vstshost.zip" vstshost
     fi
+    # Node.js dropped official support for Windows 32-bit (win-x86) starting with Node.js 20
+    # See: https://github.com/nodejs/node/blob/main/BUILDING.md#platform-list
+    # Node 24 is not available for win-x86, so we exclude it for this runtime
     if [[ "$PACKAGERUNTIME" == "win-x86" ]]; then
         INCLUDE_NODE24=false
+        echo "INFO: Node 24 is not available for win-x86. Node-based tasks will fall back to Node 20 or Node 16."
     fi
 
     acquireExternalTool "$CONTAINER_URL/mingit/${MINGIT_VERSION}/MinGit-${MINGIT_VERSION}-${BIT}-bit.zip" git
@@ -298,7 +306,9 @@ else
         fi
         acquireExternalTool "${NODE_URL}/v${NODE16_VERSION}/node-v${NODE16_VERSION}-${ARCH}.tar.gz" node16 fix_nested_dir
         acquireExternalTool "${NODE_URL}/v${NODE20_VERSION}/node-v${NODE20_VERSION}-${ARCH}.tar.gz" node20_1 fix_nested_dir
-        acquireExternalTool "${NODE_URL}/v${NODE24_VERSION}/node-v${NODE24_VERSION}-${ARCH}.tar.gz" node24 fix_nested_dir
+        if [[ "$INCLUDE_NODE24" == "true" ]]; then
+            acquireExternalTool "${NODE_URL}/v${NODE24_VERSION}/node-v${NODE24_VERSION}-${ARCH}.tar.gz" node24 fix_nested_dir
+        fi
     fi
     # remove `npm`, `npx`, `corepack`, and related `node_modules` from the `externals/node*` agent directory
     # they are installed along with node, but agent does not use them
@@ -320,10 +330,12 @@ else
     rm "$LAYOUT_DIR/externals/node20_1/bin/npx"
     rm "$LAYOUT_DIR/externals/node20_1/bin/corepack"
 
-    rm -rf "$LAYOUT_DIR/externals/node24/lib"
-    rm "$LAYOUT_DIR/externals/node24/bin/npm"
-    rm "$LAYOUT_DIR/externals/node24/bin/npx"
-    rm "$LAYOUT_DIR/externals/node24/bin/corepack"
+    if [[ "$INCLUDE_NODE24" == "true" ]]; then
+        rm -rf "$LAYOUT_DIR/externals/node24/lib"
+        rm "$LAYOUT_DIR/externals/node24/bin/npm"
+        rm "$LAYOUT_DIR/externals/node24/bin/npx"
+        rm "$LAYOUT_DIR/externals/node24/bin/corepack"
+    fi
 fi
 
 if [[ "$L1_MODE" != "" || "$PRECACHE" != "" ]]; then
