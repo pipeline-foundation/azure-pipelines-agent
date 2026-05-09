@@ -1333,5 +1333,50 @@ namespace Microsoft.VisualStudio.Services.Agent.Tests.Util
                     cancellationToken: CancellationToken.None);
             }
         }
+
+        [Fact]
+        [Trait("Level", "L0")]
+        [Trait("Category", "Common")]
+        public void TryCreateDirectory_CreatesNewDirectory()
+        {
+            var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            try
+            {
+                Assert.True(IOUtil.TryCreateDirectory(tempPath));
+                Assert.True(Directory.Exists(tempPath));
+            }
+            finally
+            {
+                if (Directory.Exists(tempPath))
+                {
+                    Directory.Delete(tempPath, recursive: true);
+                }
+            }
+        }
+
+        [Fact]
+        [Trait("Level", "L0")]
+        [Trait("Category", "Common")]
+        public void TryCreateDirectory_ReturnsTrueForExistingDirectory()
+        {
+            Assert.True(IOUtil.TryCreateDirectory(Path.GetTempPath()));
+        }
+
+        [Fact]
+        [Trait("Level", "L0")]
+        [Trait("Category", "Common")]
+        public void TryCreateDirectory_ReturnsFalseOnInvalidPath()
+        {
+            // Creating a directory at a path where a file already exists triggers IOException
+            var tempFile = Path.GetTempFileName();
+            try
+            {
+                Assert.False(IOUtil.TryCreateDirectory(tempFile));
+            }
+            finally
+            {
+                File.Delete(tempFile);
+            }
+        }
     }
 }
